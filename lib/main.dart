@@ -174,15 +174,7 @@ class RouterTestRoute extends StatelessWidget {
 class EchoRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context).settings.arguments;
-    return Scaffold(
-      appBar: new AppBar(
-        title: Text('echoRoute'),
-      ),
-      body: Center(
-        child: Text("接受的参数：$args"),
-      )
-    );
+    return testWidget();
   }
 }
 
@@ -194,6 +186,36 @@ class RandomWordsWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: new Text(wordPair.toString()),
+    );
+  }
+}
+
+// 状态访问 不便 ,非耦合组件相互调用
+// 继承StatefulWidget 不便
+
+class testWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var args = ModalRoute.of(context).settings.arguments;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('外层的title'),
+      ),
+      body: Center(
+        child: Builder(builder: (context){
+          return RaisedButton(
+            onPressed: () {
+              ScaffoldState _state = context.findAncestorStateOfType<ScaffoldState>();
+              _state.showSnackBar(
+                 SnackBar(
+                 content: Text("我是SnackBar"),
+                 ),
+              );
+            },
+            child: Text("button"),
+          );
+        }),
+      ),
     );
   }
 }
